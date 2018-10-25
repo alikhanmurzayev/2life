@@ -1,9 +1,11 @@
 import sqlite3
+import datetime
 
 # start database's tables names
 db_name = 'pregnant.db'
 users_t = 'users'
 report_t = 'reports'
+feeling_t = 'feeling'
 
 
 # end tables names
@@ -29,8 +31,17 @@ def create_users_table():
 
 def create_reports_table():
     conn, cursor = open_db(db_name)
-    query = f"CREATE TABLE {report_t} (id varchar, date date, disease varchar, period varchar, " \
-            f"medicine varchar, bp_monitored varchar, bp varchar, contacts varchar)"
+    query = f"CREATE TABLE {report_t} (id varchar, date date, chronic varchar, " \
+            f"medicine varchar, bp varchar, contacts varchar)"
+    try:
+        cursor.execute(query)
+    except:
+        pass
+    close_db(conn, cursor)
+
+def create_feeling_table():
+    conn, cursor = open_db(db_name)
+    query = f"CREATE TABLE {feeling_t} (id varchar, date date, feeling varchar)"
     try:
         cursor.execute(query)
     except:
@@ -51,10 +62,22 @@ def add_user(message):
 def set_param(message, table_name, param_name):
     conn, cursor = open_db(db_name)
     chat_id = message.chat.id
-    text = message.text
+    if param_name == 'date':
+        text = str(datetime.datetime.now())
+    else:
+        text = message.text
     query = f"UPDATE {table_name} SET {param_name}='{text}' WHERE id='{chat_id}'"
     cursor.execute(query)
     close_db(conn, cursor)
 
+def set_feeling(message):
+    conn, cursor = open_db(db_name)
+    dt = str(datetime.datetime.now())
+    query = f"INSERT INTO {feeling_t} (id, date, feeling) VALUES ('{message.chat.id}', '{dt}', '{message.text}')"
+    cursor.execute(query)
+    close_db(conn, cursor)
+
+
 create_users_table()
 create_reports_table()
+create_feeling_table()

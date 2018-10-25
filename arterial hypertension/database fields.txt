@@ -1,4 +1,4 @@
 users_t
 (id, name, surname, age, week, smoke, cig_number, alcohol, disease)
 report_t
-(id, date, disease, period, medicine, bp_monitored, bp, contacts)
+(id, date, chronic, medicine, bp, contacts)
